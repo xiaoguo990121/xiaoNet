@@ -1,0 +1,273 @@
+/**
+ * @file MsgBuffer.h
+ * @author Guo Xiao (746921314@qq.com)
+ * @brief
+ * @version 0.1
+ * @date 2025-01-08
+ *
+ *
+ */
+
+#pragma once
+#include <xiaoNet/utils/NonCopyable.h>
+#include <xiaoNet/exports.h>
+#include <string.h>
+#include <vector>
+
+namespace xiaoNet
+{
+    static constexpr size_t kBufferDefaultLength{2048};
+    static constexpr char CRLF[]{"\r\n"};
+
+    /**
+     * @brief This class represents a memory buffer used for sending and
+     * receiving data.
+     *
+     */
+    class XIAONET_EXPORT MsgBuffer
+    {
+    public:
+        /**
+         * @brief Construct a new Msg Buffer object
+         *
+         * @param len The initial size of the buffer.
+         */
+        explicit MsgBuffer(size_t len = kBufferDefaultLength);
+
+        /**
+         * @brief Get the beginning of the buffer.
+         *
+         * @return const char*
+         */
+        const char *peek() const
+        {
+            return begin() + head_;
+        }
+
+        /**
+         * @brief Get the end of the buffer where new data can be written.
+         *
+         * @return const char*
+         */
+        const char *beginWrite() const
+        {
+            return begin() + tail_;
+        }
+        char *beginWrite()
+        {
+            return begin() + tail_;
+        }
+
+        /**
+         * @brief Get a byte value from the buffer.
+         *
+         * @return uint8_t
+         */
+        uint8_t peekInt8() const
+        {
+            assert(readableBytes() >= 1);
+            return *(static_cast<const uint8_t *>((void *)peek()));
+        }
+
+        /**
+         * @brief Get a unsigned short value from the buffer.
+         *
+         * @return uint16_t
+         */
+        uint16_t peekInt16() const;
+
+        /**
+         * @brief Get a unsigned int value from the buffer.
+         *
+         * @return uint32_t
+         */
+        uint32_t peekInt32() const;
+
+        /**
+         * @brief Get a unsigned int64 value from the buffer.
+         *
+         * @return uint64_t
+         */
+        uint64_t peekInt64() const;
+
+        /**
+         * @brief Get and remove some bytes from the buffer.
+         *
+         * @param len
+         * @return std::string
+         */
+        std::string read(size_t len);
+
+        /**
+         * @brief Get the remove a byte value from the buffer.
+         *
+         * @return uint8_t
+         */
+        uint8_t readInt8();
+
+        /**
+         * @brief Get and remove a unsigned short value from the buffer.
+         *
+         * @return uint16_t
+         */
+        uint16_t readInt16();
+
+        /**
+         * @brief Get and remove a unsigned int value from the buffer.
+         *
+         * @return uint32_t
+         */
+        uint32_t readInt32();
+
+        /**
+         * @brief Get and remove a unsigned int64 value from the buffer.
+         *
+         * @return uint64_t
+         */
+        uint64_t readInt64();
+
+        /**
+         * @brief swap the buffer with another.
+         *
+         * @param buf
+         */
+        void swap(MsgBuffer &buf) noexcept;
+
+        /**
+         * @brief Return the size of the data in the buffer.
+         *
+         * @return size_t
+         */
+        size_t readableBytes() const
+        {
+            return tail_ - head_;
+        }
+
+        /**
+         * @brief Return the size of the empty part in the buffer
+         *
+         * @return size_t
+         */
+        size_t writableBytes() const
+        {
+            return buffer_.size() - tail_;
+        }
+
+        /**
+         * @brief Append new data to the buffer.
+         *
+         * @param buf
+         */
+        void append(const MsgBuffer &buf);
+        template <int N>
+        void append(const char (&buf)[N])
+        {
+            assert(strnlen(buf, N) == N - 1);
+            append(buf, N - 1);
+        }
+        void append(const char *buf, size_t len);
+        void append(const std::string &buf)
+        {
+            append(buf.c_str(), buf.length());
+        }
+
+        /**
+         * @brief Append a byte value to the end of the buffer.
+         *
+         * @param b
+         */
+        void appendInt8(const uint8_t b)
+        {
+            append(static_cast<const char *>((void *)&b), 1);
+        }
+
+        /**
+         * @brief Append a unsigned short value to the end of the buffer.
+         *
+         * @param s
+         */
+        void appendInt16(const uint16_t s);
+
+        /**
+         * @brief Append a unsigned int value to the end of the buffer.
+         *
+         * @param i
+         */
+        void appendInt32(const uint32_t i);
+
+        /**
+         * @brief Appaend a unsigned int64 value to the end of the buffer.
+         *
+         * @param l
+         */
+        void appendInt64(const uint64_t l);
+
+        /**
+         * @brief Put new data to the beginning of the buffer.
+         *
+         * @param buf
+         * @param len
+         */
+        void addInFront(const char *buf, size_t len);
+
+        /**
+         * @brief Put a byte value to the beginning of the buffer.
+         *
+         * @param b
+         */
+        void addInFrontInt8(const uint8_t b)
+        {
+            addInFront(static_cast<const char *>((void *)&b), 1);
+        }
+
+        /**
+         * @brief Put a unsigned short value to the beginning of the buffer.
+         *
+         * @param s
+         */
+        void addInFrontInt16(const uint16_t s);
+
+        /**
+         * @brief Put a unsigned int value to the beginning of the buffer.
+         *
+         * @param i
+         */
+        void addInFrontInt32(const uint32_t i);
+
+        /**
+         * @brief Put a unsigned int64 value to the beginning of the buffer.
+         *
+         * @param l
+         */
+        void addInFrontInt64(const uint64_t l);
+
+        /**
+         * @brief Remove all data in the buffer.
+         *
+         */
+        void retrieveAll();
+
+        /**
+         * @brief Remove some bytes in teh buffer.
+         *
+         * @param len
+         */
+        void retrieve(size_t len);
+
+        ssize_t readFd(int fd, int *retErrno);
+
+    private:
+        size_t head_;
+        size_t initCap_;
+        std::vector<char> buffer_;
+        size_t tail_;
+        const char *begin() const
+        {
+            return &buffer_[0];
+        }
+        char *begin()
+        {
+            return &buffer_[0];
+        }
+    };
+}

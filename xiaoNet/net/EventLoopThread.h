@@ -38,6 +38,11 @@ namespace xiaoNet
             return loop_.get();
         }
 
+        /**
+         * @brief Run the event loop of the thread. This method doesn't block the
+         * current thread.
+         *
+         */
         void run();
 
     private:

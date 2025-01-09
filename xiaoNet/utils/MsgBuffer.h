@@ -13,6 +13,10 @@
 #include <xiaoNet/exports.h>
 #include <string.h>
 #include <vector>
+#include <cstdint>
+#include <assert.h>
+#include <string>
+#include <algorithm>
 
 namespace xiaoNet
 {
@@ -254,7 +258,85 @@ namespace xiaoNet
          */
         void retrieve(size_t len);
 
+        /**
+         * @brief Read data from a file descriptor and put it into the buffer.
+         *
+         * @param fd
+         * @param retErrno
+         * @return ssize_t
+         */
         ssize_t readFd(int fd, int *retErrno);
+
+        /**
+         * @brief Remove the data before a certain position from the buffer.
+         *
+         * @param end
+         */
+        void retrieveUntil(const char *end)
+        {
+            assert(peek() <= end);
+            assert(end <= beginWrite());
+            retrieve(end - peek());
+        }
+
+        /**
+         * @brief Find the position of the buffer where the CRLF is found.
+         *
+         * @return const char*
+         */
+        const char *findCRLF() const
+        {
+            const char *crlf = std::search(peek(), beginWrite(), CRLF, CRLF + 2);
+            return crlf == beginWrite() ? NULL : crlf;
+        }
+
+        /**
+         * @brief Make sure the buffer has enough spaces to write data.
+         *
+         * @param len
+         */
+        void ensureWritableBytes(size_t len);
+
+        /**
+         * @brief Move the writer pointer forward when the new data has been written
+         * to the buffer.
+         *
+         * @param len
+         */
+        void hasWriten(size_t len)
+        {
+            assert(len <= writableBytes());
+            tail_ += len;
+        }
+
+        /**
+         * @brief Move the write pointer backward to remove data in the end of the
+         * buffer.
+         *
+         * @param offset
+         */
+        void unwrite(size_t offset)
+        {
+            assert(readableBytes() >= offset);
+            tail_ -= offset;
+        }
+
+        /**
+         * @brief Access a byte in the buffer.
+         *
+         * @param offset
+         * @return const char&
+         */
+        const char &operator[](size_t offset) const
+        {
+            assert(readableBytes() >= offset);
+            return peek()[offset];
+        }
+        char &operator[](size_t offset)
+        {
+            assert(readableBytes() >= offset);
+            return begin()[head_ + offset];
+        }
 
     private:
         size_t head_;
@@ -270,4 +352,18 @@ namespace xiaoNet
             return &buffer_[0];
         }
     };
+
+    inline void swap(MsgBuffer &one, MsgBuffer &two) noexcept
+    {
+        one.swap(two);
+    }
+}
+
+namespace std
+{
+    template <>
+    inline void swap(xiaoNet::MsgBuffer &one, xiaoNet::MsgBuffer &two) noexcept
+    {
+        one.swap(two);
+    }
 }

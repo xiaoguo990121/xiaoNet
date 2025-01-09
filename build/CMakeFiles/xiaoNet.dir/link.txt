@@ -1,2 +1,0 @@
-/usr/bin/ar qc libxiaoNet.a CMakeFiles/xiaoNet.dir/xiaoNet/net/Channel.cpp.o
-/usr/bin/ranlib libxiaoNet.a

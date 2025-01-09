@@ -1,3 +1,0 @@
-/root/xiaoNet/build/CMakeFiles/xiaoNet.dir
-/root/xiaoNet/build/CMakeFiles/edit_cache.dir
-/root/xiaoNet/build/CMakeFiles/rebuild_cache.dir

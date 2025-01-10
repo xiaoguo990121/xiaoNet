@@ -17,6 +17,7 @@
 #include <xiaoNet/net/TcpConnection.h>
 #include <xiaoNet/net/EventLoopThreadPool.h>
 #include <xiaoLog/Logger.h>
+#include <csignal>
 #include <set>
 #include <map>
 

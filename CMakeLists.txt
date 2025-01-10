@@ -62,6 +62,7 @@ set(XIAONET_INCLUDE)
 set(public_net_headers
     xiaoNet/net/AsyncStream.h
     xiaoNet/net/Channel.h
+
 )
 
 set(XIAONET_SOURCES
@@ -70,9 +71,12 @@ set(XIAONET_SOURCES
 
 target_include_directories(
     ${PROJECT_NAME}
-    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> 
-           $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>
+    PUBLIC $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}> $<INSTALL_INTERFACE:${INSTALL_INCLUDE_DIR}>
            $<BUILD_INTERFACE:${CMAKE_CURRENT_BINARY_DIR}/exports>
+    PRIVATE ${PROJECT_SOURCE_DIR}
+            ${PROJECT_SOURCE_DIR}/xiaoNet/utils
+            ${PROJECT_SOURCE_DIR}/xiaoNet/net
+            ${PROJECT_SOURCE_DIR}/xiaoNet/net/inner
 )
 set(PROJECT_BASE_PATH ${PROJECT_SOURCE_DIR})
 

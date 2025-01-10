@@ -99,7 +99,7 @@ namespace xiaoNet
          * the stream is closed.
          * @return AsyncStreamPtr
          */
-        virtual AsyncStreamPtr sendAsyncSteam(bool disableKickoff = false) = 0;
+        virtual AsyncStreamPtr sendAsyncStream(bool disableKickoff = false) = 0;
 
         /**
          * @brief Get the local address of the connection.

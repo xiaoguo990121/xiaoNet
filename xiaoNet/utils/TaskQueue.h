@@ -24,7 +24,7 @@ namespace xiaoNet
     class TaskQueue : public NonCopyable
     {
     public:
-        virtual void runTaskInQueue(const std::function<void()> &task) = 0;
+        virtual void runTaskInQueue(const std::function<void()> &task) = 0; // 接收一个任务，并将其放入队列中执行
         virtual void runTaskInQueue(std::function<void()> &&task) = 0;
         virtual std::string getName() const
         {
@@ -37,7 +37,7 @@ namespace xiaoNet
          *
          * @param task
          */
-        void syncTaskInQueue(const std::function<void()> &task)
+        void syncTaskInQueue(const std::function<void()> &task) // 同步执行任务
         {
             std::promise<int> prom;
             std::future<int> fut = prom.get_future();

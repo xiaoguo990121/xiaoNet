@@ -9,6 +9,7 @@
  */
 
 #include "Channel.h"
+#include <xiaoNet/net/EventLoop.h>
 
 #ifdef _WIN32
 
@@ -32,5 +33,63 @@ namespace xiaoNet
     {
         assert(events_ == kNoneEvent);
         addedToLoop_ = false;
+        loop_->removeChannel(this);
+    }
+
+    void Channel::update()
+    {
+        loop_->updateChannel(this);
+    }
+
+    void Channel::handleEvent()
+    {
+        if (events_ == kNoneEvent)
+            return;
+        if (tied_)
+        {
+            std::shared_ptr<void> guard = tie_.lock();
+            if (guard)
+            {
+                handleEventSafely();
+            }
+        }
+        else
+        {
+            handleEventSafely();
+        }
+    }
+    void Channel::handleEventSafely()
+    {
+        if (eventCallback_)
+        {
+            eventCallback_();
+            return;
+        }
+        if ((revents_ & POLLHUP) && !(revents_ & POLLIN))
+        {
+            if (closeCallback_)
+                closeCallback_();
+        }
+        if (revents_ & (POLLNVAL | POLLERR))
+        {
+            if (errorCallback_)
+                errorCallback_();
+        }
+#ifdef __linux__
+        if (revents_ & (POLLIN | POLLPRI | POLLRDHUP))
+#else
+#endif
+        {
+            if (readCallback_)
+                readCallback_();
+        }
+#ifdef _WIN32
+#else
+        if (revents_ & POLLOUT)
+#endif
+        {
+            if (writeCallback_)
+                writeCallback_();
+        }
     }
 }

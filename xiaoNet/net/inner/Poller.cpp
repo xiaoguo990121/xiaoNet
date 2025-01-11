@@ -10,8 +10,18 @@
 
 #include "Poller.h"
 #ifdef __linux__
-
+#include "poller/EpollPoller.h"
 #elif defined _WIN32
 #elif defined __FreeBSD__ || defined __OpenBSD__ || defined __APPLE__
 #else
 #endif
+
+using namespace xiaoNet;
+Poller *Poller::newPoller(EventLoop *loop)
+{
+#if defined __linux__ || defined _WIN32
+    return new EpollPoller(loop);
+#elif
+#else
+#endif
+}

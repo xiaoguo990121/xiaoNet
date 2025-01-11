@@ -11,6 +11,7 @@
 #pragma once
 #include <xiaoNet/utils/NonCopyable.h>
 #include <xiaoLog/Date.h>
+#include <xiaoNet/utils/LockFreeQueue.h>
 #include <vector>
 #include <functional>
 #include <atomic>
@@ -284,17 +285,35 @@ namespace xiaoNet
 
     private:
         void abortNotInLoopThread();
+        void wakeup();
+        void wakeupRead();
         std::atomic<bool> looping_;
         std::thread::id threadId_;
         std::atomic<bool> quit_;
         std::unique_ptr<Poller> poller_;
 
+        ChannelList activeChannels_;
+        Channel *currentActiveChannel_;
+
+        bool eventHandling_;
+        MpscQueue<Func> funcs_;
+        std::unique_ptr<TimerQueue> timerQueue_;
+        MpscQueue<Func> funcsOnQuit_;
         bool callingFuncs_{false};
+#ifdef __linux__
+        int wakeupFd_;
+        std::unique_ptr<Channel> wakeupChannelPtr_;
+#elif
+#else
+#endif
+
+        void doRunInLoopFuncs();
 
 #ifdef _WIN32
         size_t index_{size_t(-1)};
 #else
         size_t index_{std::numeric_limits<size_t>::max()};
 #endif
+        EventLoop **threadLocalLoopPtr_;
     };
 }

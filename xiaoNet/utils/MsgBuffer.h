@@ -303,7 +303,7 @@ namespace xiaoNet
          *
          * @param len
          */
-        void hasWriten(size_t len)
+        void hasWritten(size_t len)
         {
             assert(len <= writableBytes());
             tail_ += len;

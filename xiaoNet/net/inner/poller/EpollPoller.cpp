@@ -159,7 +159,7 @@ namespace xiaoNet
     }
     void EpollPoller::removeChannel(Channel *channel)
     {
-        EpollPoller::assertInLoopThread();
+        assertInLoopThread();
 #ifndef NDEBUG
         int fd = channel->fd();
         assert(channels_.find(fd) != channels_.end());

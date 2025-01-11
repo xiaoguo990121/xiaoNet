@@ -8,6 +8,9 @@
  *
  */
 #include <xiaoNet/net/EventLoopThread.h>
+#ifdef __linux__
+#include <sys/prctl.h>
+#endif
 
 using namespace xiaoNet;
 
@@ -47,6 +50,7 @@ void EventLoopThread::wait()
 void EventLoopThread::loopFuncs()
 {
 #ifdef __linux__
+    ::prctl(PR_SET_NAME, loopThreadName_.c_str());
 #endif
     thread_local static std::shared_ptr<EventLoop> loop =
         std::make_shared<EventLoop>();

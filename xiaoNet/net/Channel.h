@@ -271,6 +271,7 @@ namespace xiaoNet
         static const int kWriteEvent;
 
     private:
+        friend class EpollPoller;
         void update();
         void handleEvent();
         void handleEventSafely();

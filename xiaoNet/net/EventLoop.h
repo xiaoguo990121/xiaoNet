@@ -287,6 +287,7 @@ namespace xiaoNet
         std::atomic<bool> looping_;
         std::thread::id threadId_;
         std::atomic<bool> quit_;
+        std::unique_ptr<Poller> poller_;
 
         bool callingFuncs_{false};
 

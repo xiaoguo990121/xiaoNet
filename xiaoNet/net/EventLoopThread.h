@@ -16,6 +16,10 @@
 
 namespace xiaoNet
 {
+    /**
+     * @brief This class represents an event loop thread.
+     *
+     */
     class XIAONET_EXPORT EventLoopThread : NonCopyable
     {
     public:

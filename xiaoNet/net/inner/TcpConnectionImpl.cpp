@@ -545,3 +545,13 @@ void TcpConnectionImpl::sendFile(const char *fileName,
     sendFile(std::move(fileNode));
 #endif
 }
+
+void TcpConnectionImpl::sendFile(const wchar_t *fileName,
+                                 long long offset,
+                                 long long length)
+{
+    assert(fileName);
+#ifndef _WIN32
+#else
+#endif
+}

@@ -48,6 +48,7 @@ namespace xiaoNet
 #endif
           events_(kInitEventListSize)
     {
+        LOG_DEBUG << "EpollPoller constructed, epollfd_: " << epollfd_;
     }
     EpollPoller::~EpollPoller()
     {
@@ -73,6 +74,7 @@ namespace xiaoNet
 
         if (numEvents > 0)
         {
+            LOG_DEBUG << "numEvents: " << numEvents << ", epollfd: " << epollfd_;
             fillActiveChannels(numEvents, activeChannels);
             if (static_cast<size_t>(numEvents) == events_.size())
             {
@@ -81,7 +83,8 @@ namespace xiaoNet
         }
         else if (numEvents == 0)
         {
-            std::cout << "nothing happended" << std::endl;
+            LOG_DEBUG << "nothing happended, epollfd: " << epollfd_;
+            // std::cout << "nothing happended" << std::endl;
         }
         else
         {

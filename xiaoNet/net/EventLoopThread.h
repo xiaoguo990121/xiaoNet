@@ -55,7 +55,7 @@ namespace xiaoNet
 
         std::string loopThreadName_;
         void loopFuncs();
-        std::promise<std::shared_ptr<EventLoop>> promiseForLoopPointer_;
+        std::promise<std::shared_ptr<EventLoop>> promiseForLoopPointer_; // 用于线程间传递EventLoop
         std::promise<int> promiseForRun_;
         std::promise<int> promiseForLoop_;
         std::once_flag once_;

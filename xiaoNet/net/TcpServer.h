@@ -219,7 +219,7 @@ namespace xiaoNet
          *
          * @param timeout
          */
-        void kickoffIdleConnection(size_t timeout)
+        void kickoffIdleConnections(size_t timeout)
         {
             loop_->runInLoop([this, timeout]()
                              {

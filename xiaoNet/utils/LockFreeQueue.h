@@ -70,7 +70,7 @@ namespace xiaoNet
         bool dequeue(T &output)
         {
             BufferNode *tail = tail_.load(std::memory_order_relaxed);
-            BufferNode *next = tail_->next_.load(std::memory_order_acquire);
+            BufferNode *next = tail->next_.load(std::memory_order_acquire);
 
             if (next == nullptr)
             {
@@ -86,7 +86,7 @@ namespace xiaoNet
         bool empty()
         {
             BufferNode *tail = tail_.load(std::memory_order_relaxed);
-            BufferNode *next = tail_->next_.load(std::memory_order_acquire);
+            BufferNode *next = tail->next_.load(std::memory_order_acquire);
             return next == nullptr;
         }
 

@@ -75,6 +75,7 @@ static void readTimerfd(int timerfd, const TimePoint &)
 
 void TimerQueue::handleRead()
 {
+    LOG_DEBUG << "handleRead called";
     loop_->assertInLoopThread();
     const auto now = std::chrono::steady_clock::now();
     readTimerfd(timerfd_, now);
@@ -106,6 +107,7 @@ TimerQueue::TimerQueue(EventLoop *loop)
       callingExpiredTimers_(false)
 {
 #ifdef __linux__
+    LOG_DEBUG << "TimerQueue construct, timerfd_: " << timerfd_;
     timerfdChannelPtr_->setReadCallback(
         std::bind(&TimerQueue::handleRead, this));
     timerfdChannelPtr_->enableReading();
@@ -160,27 +162,7 @@ TimerId TimerQueue::addTimer(TimerCallback &&cb,
                              const TimeInterval &interval)
 {
     std::shared_ptr<Timer> timerPtr =
-        std::make_shared<Timer>(std::move(cb), when, interval);
-    loop_->runInLoop([this, timerPtr]()
-                     { addTimerInLoop(timerPtr); });
-}
-TimerId TimerQueue::addTimer(TimerCallback &&cb,
-                             const TimePoint &when,
-                             const TimeInterval &interval)
-{
-    std::shared_ptr<Timer> timerPtr =
         std::make_shared<Timer>(cb, when, interval);
-
-    loop_->runInLoop([this, timerPtr]()
-                     { addTimerInLoop(timerPtr); });
-    return timerPtr->id();
-}
-TimerId TimerQueue::addTimer(TimerCallback &&cb,
-                             const TimePoint &when,
-                             const TimeInterval &interval)
-{
-    std::shared_ptr<Timer> timerPtr =
-        std::make_shared<Timer>(std::move(cb), when, interval);
 
     loop_->runInLoop([this, timerPtr]()
                      { addTimerInLoop(timerPtr); });

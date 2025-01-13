@@ -85,6 +85,7 @@ TcpConnectionImpl::TcpConnectionImpl(EventLoop *loop,
         // This is triggered when peer sends a close alert
         tlsProviderPtr_->setCloseCallback(onSslCloseAlert);
     }
+    LOG_DEBUG << "END";
 }
 
 TcpConnectionImpl::~TcpConnectionImpl()

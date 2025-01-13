@@ -1,0 +1,25 @@
+#[[
+# - Config file for the XiaoNet package
+# It defines the following variables
+#  XIAOLOG_INCLUDE_DIRS - include directories for XiaoNet
+#  XIAOLOG_LIBRARIES    - libraries to link against
+#  XIAOLOG_FOUND
+# This module defines the following IMPORTED target:
+# XiaoNet::XiaoNet
+#]]
+
+@PACKAGE_INIT@
+
+include(CMakeFindDependencyMacro)
+list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_LIST_DIR})
+#if(@spdlog_FOUND@)
+#    find_dependency(spdlog)
+#endif
+
+get_filename_component(XIAOLOG_CMAEK_DIR "${CMAKE_CURRENT_LIST_FILE}" PATH)
+if(NOT TARGET XiaoNet::XiaoNet)
+    include("${XIAONET_CMAEK_DIR}/XiaoNetTargets.cmake")
+endif()
+
+get_target_property(XIAOLOG_INCLUDE_DIRS XiaoNet::XiaoNet INTERFACE_INCLUDE_DIRECTORIES)
+set(XIAOLOG_LIBRARIES XiaoNet::XiaoNet)

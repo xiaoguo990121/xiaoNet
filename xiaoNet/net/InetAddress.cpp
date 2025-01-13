@@ -11,7 +11,7 @@
 #include <xiaoNet/net/InetAddress.h>
 
 #include <xiaoLog/Logger.h>
-
+#include <cstring>
 #ifdef _WIN32
 #else
 #include <string.h>

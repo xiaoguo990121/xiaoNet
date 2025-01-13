@@ -32,6 +32,7 @@ void MsgBuffer::ensureWritableBytes(size_t len)
 {
     if (writableBytes() > len)
         return;
+    // LOG_DEBUG << head_ + writableBytes() << " - " << len + kBufferOffset;
     if (head_ + writableBytes() >=
         (len + kBufferOffset)) // move readable bytes
     {
@@ -42,6 +43,7 @@ void MsgBuffer::ensureWritableBytes(size_t len)
     }
     // create new bufffer
     size_t newLen;
+    // LOG_DEBUG << buffer_.size() * 2 << " - " << kBufferOffset + readableBytes() + len;
     if ((buffer_.size() * 2) > (kBufferOffset + readableBytes() + len))
         newLen = buffer_.size() * 2;
     else
@@ -67,6 +69,7 @@ void MsgBuffer::append(const char *buf, size_t len)
 {
     ensureWritableBytes(len);
     memcpy(&buffer_[tail_], buf, len);
+    tail_ += len;
 }
 void MsgBuffer::appendInt16(const uint16_t s)
 {

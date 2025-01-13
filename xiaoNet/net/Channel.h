@@ -45,10 +45,12 @@ namespace xiaoNet
          */
         void setReadCallback(const EventCallback &cb)
         {
+            LOG_DEBUG << "setReadCallback called, fd: " << fd_;
             readCallback_ = cb;
         }
         void setReadCallback(EventCallback &&cb)
         {
+            LOG_DEBUG << "setReadCallback called, fd: " << fd_;
             readCallback_ = std::move(cb);
         }
 
@@ -204,6 +206,7 @@ namespace xiaoNet
          */
         void enableWriting()
         {
+            LOG_DEBUG << "enableWriting";
             events_ |= kWriteEvent;
             update();
         }

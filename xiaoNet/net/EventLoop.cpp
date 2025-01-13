@@ -62,6 +62,7 @@ namespace xiaoNet
 #endif
           threadLocalLoopPtr_(&t_loopInThisThread)
     {
+        LOG_DEBUG << "EventLoop constructed, wakeupFd_: " << wakeupFd_;
         if (t_loopInThisThread)
         {
             LOG_FATAL << "There is already an EventLoop in this thread";
@@ -226,17 +227,21 @@ namespace xiaoNet
     }
     void EventLoop::queueInLoop(const Func &cb)
     {
+        LOG_DEBUG << "EventLoop::queueInLoop called";
         funcs_.enqueue(cb);
         if (!isInLoopThread() || !looping_.load(std::memory_order_acquire))
         {
+            LOG_DEBUG << " wakeup() called";
             wakeup();
         }
     }
     void EventLoop::queueInLoop(Func &&cb)
     {
+        LOG_DEBUG << "EventLoop::queueInLoop called";
         funcs_.enqueue(std::move(cb));
         if (!isInLoopThread() || !looping_.load(std::memory_order_acquire))
         {
+            LOG_DEBUG << " wakeup() called, isInLoopThread: " << isInLoopThread() << " looping_: " << looping_.load(std::memory_order_acquire);
             wakeup();
         }
     }
@@ -285,6 +290,7 @@ namespace xiaoNet
     }
     void EventLoop::invalidateTimer(TimerId id)
     {
+        std::cout << isRunning() << std::endl;
         if (isRunning() && timerQueue_)
             timerQueue_->invalidateTimer(id);
     }
@@ -307,6 +313,7 @@ namespace xiaoNet
     }
     void EventLoop::wakeup()
     {
+        LOG_DEBUG << "wakeup called, wakeupFd_" << wakeupFd_;
         uint64_t tmp = 1;
 #ifdef __linux__
         int ret = write(wakeupFd_, &tmp, sizeof(tmp));
@@ -317,6 +324,7 @@ namespace xiaoNet
     }
     void EventLoop::wakeupRead()
     {
+        LOG_DEBUG << "wakeupRead called, wakeupFd_" << wakeupFd_;
         ssize_t ret = 0;
 #ifdef __linux__
         uint64_t tmp;

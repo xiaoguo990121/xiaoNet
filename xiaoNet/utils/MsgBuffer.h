@@ -17,6 +17,7 @@
 #include <assert.h>
 #include <string>
 #include <algorithm>
+#include <xiaoLog/Logger.h>
 
 namespace xiaoNet
 {
@@ -166,6 +167,7 @@ namespace xiaoNet
         template <int N>
         void append(const char (&buf)[N])
         {
+            LOG_DEBUG << " TEST ";
             assert(strnlen(buf, N) == N - 1);
             append(buf, N - 1);
         }

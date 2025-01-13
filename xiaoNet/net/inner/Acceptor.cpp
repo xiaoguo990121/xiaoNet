@@ -54,13 +54,16 @@ void Acceptor::listen()
     if (beforeListenSetSockOptCallback_)
         beforeListenSetSockOptCallback_(sock_.fd());
     sock_.listen();
+    LOG_DEBUG << "listen called";
     acceptChannel_.enableReading();
 }
 
 void Acceptor::readCallback()
 {
+    LOG_DEBUG << "Acceptor::readCallback called";
     InetAddress peer;
     int newsock = sock_.accept(&peer);
+    LOG_DEBUG << newsock;
     if (newsock >= 0)
     {
         if (afterAcceptSetSockOptCallback_)

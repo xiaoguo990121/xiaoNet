@@ -26,6 +26,7 @@ namespace xiaoNet
         static int createNonblockingSocketOrDie(int family)
         {
 #ifdef __linux__
+            // 创建一个非阻塞tcp套接字
             int sock = ::socket(family,
                                 SOCK_STREAM | SOCK_NONBLOCK | SOCK_CLOEXEC,
                                 IPPROTO_TCP);
